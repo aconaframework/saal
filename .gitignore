@@ -9,16 +9,18 @@ log/*
 /src/*/APDescription.txt
 /src/*/build
 /src/*/gradle
+/src/*/gradlew
+/src/*/gradlew.bat
+/src/*/gradle
 /src/*/.classpath
 .metadata
 RemoteSystemsTempFiles
 .recommenders
-/src/acona-cell/dependencies
-/*/acona-demo-webservice/settings.gradle
-/src/acona-cognitiveframework/.project
-/src/acona-cognitiveframework/gradlew
-/src/acona-cognitiveframework/gradlew.bat
-/src/acona-cognitiveframework/settings.gradle
 
 MTPs-MainContainer.txt
 APDescription.txt
+
+.gradle
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
