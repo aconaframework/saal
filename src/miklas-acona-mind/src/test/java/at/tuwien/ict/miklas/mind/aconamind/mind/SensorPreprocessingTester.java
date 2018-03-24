@@ -83,6 +83,9 @@ public class SensorPreprocessingTester {
 			
 			CellGatewayImpl agent = this.launcher.createAgent(CellConfig.newConfig(agentName)
 					.addCellfunction(CellFunctionConfig.newConfig(agentFunctionName, SensorPreprocessing.class)));
+			
+			// SET SENSOR RANGE TO 6
+			SensorPreprocessing.SensorRange = 6;
 
 			synchronized (this) {
 				try {
@@ -115,7 +118,7 @@ public class SensorPreprocessingTester {
 			
 			synchronized (this) {
 				try {
-					this.wait(300);
+					this.wait(400);
 				} catch (Exception e) {
 					
 				}
@@ -141,6 +144,82 @@ public class SensorPreprocessingTester {
 			assertEquals(result.distanceLeftObjectName, "OBSTACLE8");
 			assertEquals(result.distanceRight, 6);
 			assertEquals(result.distanceRightObjectName, "OBSTACLE5");
+			log.info("Test passed");
+		} catch (Exception e) {
+			log.error("Error testing system", e);
+			fail("Error");
+		}
+	}
+	
+	@Test
+	public void sensorPreprocessingTesterWithLimitedSensorRange() {
+		try {
+			String agentName=  "testAgent";
+			String agentFunctionName = "SensorPreprocessing";
+			
+			CellGatewayImpl agent = this.launcher.createAgent(CellConfig.newConfig(agentName)
+					.addCellfunction(CellFunctionConfig.newConfig(agentFunctionName, SensorPreprocessing.class)));
+			
+			// SET SENSOR RANGE TO 3
+			SensorPreprocessing.SensorRange = 3;
+
+			synchronized (this) {
+				try {
+					this.wait(100);
+				} catch (Exception e) {
+					
+				}
+			}
+			
+			// GENERATE EXTERNAL PERCEPTION REQUEST
+			Chunk inputs= ChunkBuilder.newChunk("Inputs", "INPUT");
+			inputs.setValue("Timestamp", 4);
+			inputs.setValue("Healthchange", 1);
+			inputs.setValue("Health", 99);
+			
+			//Get perception
+			ArrayList<Obstacle> obstacles = new ArrayList<>();
+			obstacles.add(new Obstacle(new Point(0, -5), "OBSTACLE1"));
+			obstacles.add(new Obstacle(new Point(0, -4), "OBSTACLE2"));
+			obstacles.add(new Obstacle(new Point(0, 2), "OBSTACLE3"));
+			obstacles.add(new Obstacle(new Point(0, 4), "OBSTACLE4"));
+			obstacles.add(new Obstacle(new Point(6, 0), "OBSTACLE5"));
+			obstacles.add(new Obstacle(new Point(7, 0), "OBSTACLE6"));
+			obstacles.add(new Obstacle(new Point(-5, 0), "OBSTACLE7"));
+			obstacles.add(new Obstacle(new Point(-3, 0), "OBSTACLE8"));
+			generateExternalPerception(inputs, obstacles, 7);
+					
+			
+			agent.getCommunicator().write(Arrays.asList(DatapointBuilder.newDatapoint(SensorPreprocessing.PERCEPTIONADDRESS).setValue(inputs.toJsonObject())));
+			
+			synchronized (this) {
+				try {
+					this.wait(400);
+				} catch (Exception e) {
+					
+				}
+			}
+			
+			log.debug("Read Sensor preprocessing data={}", agent.getCommunicator().read(SensorPreprocessing.SENSORDATAADDRESS));
+			sensorDataDTO result = new Gson().fromJson(agent.getCommunicator().read(SensorPreprocessing.SENSORDATAADDRESS).getValue(), sensorDataDTO.class);
+
+			log.debug("Distance down: correct value={}, actual value={}", 2, result.distanceDown);
+			log.debug("Distance down obstacle: correct value={}, actual value={}", "OBSTACLE3", result.distanceDownObjectName);
+			log.debug("Distance up: correct value={}, actual value={}", 4, result.distanceUp);
+			log.debug("Distance up obstacle: correct value={}, actual value={}", "OBSTACLE2", result.distanceUpObjectName);
+			log.debug("Distance right: correct value={}, actual value={}", 6, result.distanceRight);
+			log.debug("Distance right obstacle: correct value={}, actual value={}", "OBSTACLE5", result.distanceRightObjectName);
+			log.debug("Distance left: correct value={}, actual value={}", 3, result.distanceLeft);
+			log.debug("Distance left obstacle: correct value={}, actual value={}", "OBSTACLE8", result.distanceLeftObjectName);
+
+			assertEquals(result.distanceDown, 2);
+			assertEquals(result.distanceDownObjectName, "OBSTACLE3");
+			assertEquals(result.distanceUp, Integer.MAX_VALUE);
+			assertEquals(result.distanceUpObjectName, "");
+			assertEquals(result.distanceLeft, 3);
+			assertEquals(result.distanceLeftObjectName, "OBSTACLE8");
+			assertEquals(result.distanceRight, Integer.MAX_VALUE);
+			assertEquals(result.distanceRightObjectName, "");
 			log.info("Test passed");
 		} catch (Exception e) {
 			log.error("Error testing system", e);

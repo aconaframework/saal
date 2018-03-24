@@ -27,7 +27,11 @@ public class SensorPreprocessing extends CellFunctionThreadImpl {
 	private static Gson gson = new Gson();
 	private int count = 0;
 	private sensorDataDTO sensorDataDTO = new sensorDataDTO();
-		
+	
+	// Set the range of view for the sensor. 
+	public final static int SENSORRANGEDEFAULT = 2;
+	public static int SensorRange = SENSORRANGEDEFAULT;  
+	
 	public final static String INPUTBUFFER = "inputbuffer";
 	public final static String OUTPUTBUFFER = "inputbuffer";
 	public final static String PERCEPTIONADDRESS = INPUTBUFFER + ".perception";
@@ -60,19 +64,19 @@ public class SensorPreprocessing extends CellFunctionThreadImpl {
 			hasPerceptDTO item = i.next();
 			if(!(item.BodyType.toLowerCase().equals("floor")) && (item.x == 0 || item.y == 0)) {				
 				
-				if((item.x < 0 && item.y == 0) && (Math.abs(item.x) < sensorDataDTO.distanceLeft)) {
+				if((item.y == 0 && item.x < 0 && Math.abs(item.x) <= SensorRange) && (Math.abs(item.x) < sensorDataDTO.distanceLeft)) {
 					sensorDataDTO.distanceLeft = Math.abs(item.x);
 					sensorDataDTO.distanceLeftObjectName = item.Name;
 				}
-				else if((item.x > 0 && item.y == 0) && (item.x < sensorDataDTO.distanceRight)) {
+				else if((item.y == 0 && item.x > 0 && item.x <= SensorRange) && (item.x < sensorDataDTO.distanceRight)) {
 					sensorDataDTO.distanceRight = item.x;
 					sensorDataDTO.distanceRightObjectName = item.Name;
 				}
-				else if((item.x == 0 && item.y < 0) && (Math.abs(item.y) < sensorDataDTO.distanceUp)) {
+				else if((item.x == 0 && item.y < 0 && Math.abs(item.y) <= SensorRange) && (Math.abs(item.y) < sensorDataDTO.distanceUp)) {
 					sensorDataDTO.distanceUp = Math.abs(item.y);
 					sensorDataDTO.distanceUpObjectName = item.Name;
 				}
-				else if((item.x == 0 && item.y > 0) && (item.y < sensorDataDTO.distanceDown)) {
+				else if((item.x == 0 && item.y > 0 && item.y <= SensorRange) && (item.y < sensorDataDTO.distanceDown)) {
 					sensorDataDTO.distanceDown = item.y;
 					sensorDataDTO.distanceDownObjectName = item.Name;
 				}
