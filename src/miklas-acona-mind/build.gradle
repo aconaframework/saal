@@ -62,6 +62,11 @@ dependencies {
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.+'
+    
+    // DL4J
+    compile 'org.deeplearning4j:dl4j-spark_2.11:0.9.1_spark_1'
+	compile 'org.nd4j:nd4j-native-platform:0.9.1'
+    
 }
 
 //Build jar

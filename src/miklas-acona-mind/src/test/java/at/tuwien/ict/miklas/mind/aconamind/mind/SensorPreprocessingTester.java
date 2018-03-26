@@ -83,9 +83,6 @@ public class SensorPreprocessingTester {
 			
 			CellGatewayImpl agent = this.launcher.createAgent(CellConfig.newConfig(agentName)
 					.addCellfunction(CellFunctionConfig.newConfig(agentFunctionName, SensorPreprocessing.class)));
-			
-			// SET SENSOR RANGE TO 6
-			SensorPreprocessing.SensorRange = 6;
 
 			synchronized (this) {
 				try {
@@ -94,6 +91,9 @@ public class SensorPreprocessingTester {
 					
 				}
 			}
+			
+			// SET SENSOR RANGE TO 6
+			SensorPreprocessing.SensorRange = 6;
 			
 			// GENERATE EXTERNAL PERCEPTION REQUEST
 			Chunk inputs= ChunkBuilder.newChunk("Inputs", "INPUT");
@@ -118,7 +118,7 @@ public class SensorPreprocessingTester {
 			
 			synchronized (this) {
 				try {
-					this.wait(400);
+					this.wait(500);
 				} catch (Exception e) {
 					
 				}
@@ -194,7 +194,7 @@ public class SensorPreprocessingTester {
 			
 			synchronized (this) {
 				try {
-					this.wait(400);
+					this.wait(500);
 				} catch (Exception e) {
 					
 				}

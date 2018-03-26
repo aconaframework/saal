@@ -29,7 +29,7 @@ public class SensorPreprocessing extends CellFunctionThreadImpl {
 	private sensorDataDTO sensorDataDTO = new sensorDataDTO();
 	
 	// Set the range of view for the sensor. 
-	public final static int SENSORRANGEDEFAULT = 2;
+	public final static int SENSORRANGEDEFAULT = 5;
 	public static int SensorRange = SENSORRANGEDEFAULT;  
 	
 	public final static String INPUTBUFFER = "inputbuffer";
@@ -66,18 +66,22 @@ public class SensorPreprocessing extends CellFunctionThreadImpl {
 				
 				if((item.y == 0 && item.x < 0 && Math.abs(item.x) <= SensorRange) && (Math.abs(item.x) < sensorDataDTO.distanceLeft)) {
 					sensorDataDTO.distanceLeft = Math.abs(item.x);
+					sensorDataDTO.distanceLeftNormalized = (double) sensorDataDTO.distanceLeft / (double) SensorRange;
 					sensorDataDTO.distanceLeftObjectName = item.Name;
 				}
 				else if((item.y == 0 && item.x > 0 && item.x <= SensorRange) && (item.x < sensorDataDTO.distanceRight)) {
 					sensorDataDTO.distanceRight = item.x;
+					sensorDataDTO.distanceRightNormalized = (double) sensorDataDTO.distanceRight / (double) SensorRange;
 					sensorDataDTO.distanceRightObjectName = item.Name;
 				}
 				else if((item.x == 0 && item.y < 0 && Math.abs(item.y) <= SensorRange) && (Math.abs(item.y) < sensorDataDTO.distanceUp)) {
 					sensorDataDTO.distanceUp = Math.abs(item.y);
+					sensorDataDTO.distanceUpNormalized = (double) sensorDataDTO.distanceUp / (double) SensorRange;
 					sensorDataDTO.distanceUpObjectName = item.Name;
 				}
 				else if((item.x == 0 && item.y > 0 && item.y <= SensorRange) && (item.y < sensorDataDTO.distanceDown)) {
 					sensorDataDTO.distanceDown = item.y;
+					sensorDataDTO.distanceDownNormalized = (double) sensorDataDTO.distanceDown / (double) SensorRange;
 					sensorDataDTO.distanceDownObjectName = item.Name;
 				}
 			}
@@ -118,18 +122,8 @@ public class SensorPreprocessing extends CellFunctionThreadImpl {
 
 	@Override
 	protected void executeCustomPostProcessing() throws Exception {
-		Chunk sensorData = ChunkBuilder.newChunk("SensorData", "SENSORDATA");
-		sensorData.setValue("Timestamp", sensorDataDTO.Timestamp);
-		sensorData.setValue("distanceUp", sensorDataDTO.distanceUp);
-		sensorData.setValue("distanceUpObjectName", sensorDataDTO.distanceUpObjectName);
-		sensorData.setValue("distanceDown", sensorDataDTO.distanceDown);
-		sensorData.setValue("distanceDownObjectName", sensorDataDTO.distanceDownObjectName);
-		sensorData.setValue("distanceRight", sensorDataDTO.distanceRight);
-		sensorData.setValue("distanceRightObjectName", sensorDataDTO.distanceRightObjectName);
-		sensorData.setValue("distanceLeft", sensorDataDTO.distanceLeft);
-		sensorData.setValue("distanceLeftObjectName", sensorDataDTO.distanceLeftObjectName);
-		
-		this.getCommunicator().write(Arrays.asList(DatapointBuilder.newDatapoint(SENSORDATAADDRESS).setValue(sensorData.toJsonObject())));
+				
+		this.getCommunicator().write(Arrays.asList(DatapointBuilder.newDatapoint(SENSORDATAADDRESS).setValue(sensorDataDTO.toJsonObject())));
 		log.debug("Written sensor data={}", sensorDataDTO);
 	}
 
