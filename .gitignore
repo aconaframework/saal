@@ -20,7 +20,6 @@ RemoteSystemsTempFiles
 MTPs-MainContainer.txt
 APDescription.txt
 
-.gradle
 gradle-app.setting
 !gradle-wrapper.jar
 .gradletasknamecache
